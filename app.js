@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
-const uuidv4 = require("uuid/v4");
+const { v4: uuidv4 } = require('uuid');
 
 const feedRoutes = require("./routes/feed");
 
@@ -14,7 +14,7 @@ const fileStorage = multer.diskStorage({
     callback(null, "images");
   },
   filename: (req, file, callback) => {
-    callback(null, uuidv4());
+    callback(null, uuidv4() + '-' + file.originalname);
   }
 });
 
@@ -67,45 +67,3 @@ mongoose
     app.listen(8080);
   })
   .catch(err => console.log(err));
-
-//   Instead of
-
-// const storage = multer.diskStorage({
-//     destination: function(req, file, cb) {
-//         cb(null, 'images');
-//     },
-//     filename: function(req, file, cb) {
-//         cb(null, new Date().toISOString() + file.originalname);
-//     }
-// });
-// which we'll write in the next lecture, you should use this slightly modified version:
-
-// const uuidv4 = require('uuid/v4')
-
-// const storage = multer.diskStorage({
-//     destination: function(req, file, cb) {
-//         cb(null, 'images');
-//     },
-//     filename: function(req, file, cb) {
-//         cb(null, uuidv4())
-//     }
-// });
-// For this, install the uuid package by running:
-
-// npm install --save uuid
-
-// To ensure that images can be loaded correctly on the frontend, you should also change the logic in the feed.js controller:
-
-// in createPosts, change the imageUrl const:
-
-// exports.createPost = (req, res, next) => {
-//     ...
-//     const imageUrl = req.file.path.replace("\\" ,"/");
-//     ...
-// }
-// and in updatePost (once we added that later):
-
-// exports.updatePost = (req, res, next) => {
-//     ...
-//     imageUrl = req.file.path.replace("\\","/");
-// }
