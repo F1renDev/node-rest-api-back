@@ -14,15 +14,13 @@ router.put(
       .isEmail()
       .withMessage("Please, enter a valid email")
       .custom((value, { req }) => {
-        return User.findOne({ email: value })
-          .then(userDoc => {
-            if (userDoc) {
-              return Promise.reject(
-                "Email address already exists!, [routes/auth.js => router.put()]"
-              );
-            }
-          })
-          .catch(err => console.log(err));
+        return User.findOne({ email: value }).then(userDoc => {
+          if (userDoc) {
+            return Promise.reject(
+              "Email address already exists!, [routes/auth.js => router.put()]"
+            );
+          }
+        });
       })
       .normalizeEmail(),
     check("password")
@@ -35,5 +33,7 @@ router.put(
   ],
   authController.signup
 );
+
+router.post("/login", authController.login);
 
 module.exports = router;
